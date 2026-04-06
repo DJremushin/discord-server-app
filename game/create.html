@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サーバー募集作成 | Apex Match Pro</title>
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">Apex Match Pro</div>
+    <nav class="main-nav">
+      <a href="game.html">トップ</a>
+      <a href="#">ダッシュボード</a>
+      <a href="#">管理</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="filters">
+    <div class="container">
+      <div class="panel">
+        <div class="filter-block">
+          <h2>サーバー名</h2>
+          <div class="search-box">
+            <input type="text" id="postTitle" placeholder="例：夜更かし雑談ラウンジ" />
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <h2>カテゴリ</h2>
+          <div class="chips create-category-chips">
+            <button class="chip active" type="button">雑談</button>
+            <button class="chip" type="button">ゲーム</button>
+            <button class="chip" type="button">勉強</button>
+            <button class="chip" type="button">音楽</button>
+            <button class="chip" type="button">配信</button>
+            <button class="chip" type="button">コミュニティ</button>
+          </div>
+          <input type="hidden" id="postCategory" value="雑談" />
+        </div>
+
+        <div class="filter-block">
+          <h2>雰囲気</h2>
+          <div class="chips create-style-chips">
+            <button class="chip active" type="button">初心者歓迎</button>
+            <button class="chip" type="button">社会人</button>
+            <button class="chip" type="button">深夜勢</button>
+            <button class="chip" type="button">VCあり</button>
+            <button class="chip" type="button">少人数</button>
+            <button class="chip" type="button">大人数</button>
+            <button class="chip" type="button">雑談中心</button>
+            <button class="chip" type="button">ゲーム好き</button>
+          </div>
+          <input type="hidden" id="postStyles" value="初心者歓迎" />
+        </div>
+
+        <div class="filter-block">
+          <h2>メンバー数</h2>
+          <div class="search-box">
+            <input type="number" id="postMembers" placeholder="例：42" />
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <h2>招待リンク</h2>
+          <div class="search-box">
+            <input type="url" id="postInvite" placeholder="https://discord.gg/xxxxxx" />
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <h2>サーバー紹介</h2>
+          <div class="create-textarea-wrap">
+            <textarea
+              class="create-textarea"
+              id="postDescription"
+              placeholder="例：夜にのんびり雑談したい人向けのサーバーです。社会人多めで落ち着いた雰囲気です。"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" id="savePostBtn">この内容で保存する</button>
+            <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const editingId = params.get("id");
+
+  const savePostBtn = document.querySelector("#savePostBtn");
+  const postTitle = document.querySelector("#postTitle");
+  const postCategory = document.querySelector("#postCategory");
+  const postStyles = document.querySelector("#postStyles");
+  const postMembers = document.querySelector("#postMembers");
+  const postInvite = document.querySelector("#postInvite");
+  const postDescription = document.querySelector("#postDescription");
+
+  const categoryButtons = document.querySelectorAll(".create-category-chips .chip");
+  const styleButtons = document.querySelectorAll(".create-style-chips .chip");
+
+  let currentUser = null;
+
+  async function fetchCurrentUser() {
+    try {
+      const res = await fetch("http://localhost:3000/api/me", {
+        credentials: "include"
+      });
+
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      if (!data.loggedIn) return null;
+
+      currentUser = data.user;
+      return data.user;
+    } catch (e) {
+      console.error("fetchCurrentUser error:", e);
+      return null;
+    }
+  }
+
+  function setActiveCategory(category) {
+    categoryButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.textContent.trim() === category);
+    });
+    postCategory.value = category;
+  }
+
+  function setActiveStyles(stylesText) {
+    const styles = (stylesText || "").split(" ").filter(Boolean);
+
+    styleButtons.forEach((btn) => {
+      const value = btn.textContent.trim();
+      btn.classList.toggle("active", styles.includes(value));
+    });
+
+    postStyles.value = styles.join(" ");
+  }
+
+  categoryButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setActiveCategory(btn.textContent.trim());
+    });
+  });
+
+  styleButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("active");
+
+      const selectedStyles = Array.from(styleButtons)
+        .filter((b) => b.classList.contains("active"))
+        .map((b) => b.textContent.trim());
+
+      if (selectedStyles.length === 0) {
+        btn.classList.add("active");
+        postStyles.value = btn.textContent.trim();
+      } else {
+        postStyles.value = selectedStyles.join(" ");
+      }
+    });
+  });
+
+  async function initCreatePage() {
+    await fetchCurrentUser();
+
+    if (!currentUser) {
+      alert("投稿にはDiscordログインが必要です");
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (editingId) {
+      const savedPosts = JSON.parse(localStorage.getItem("apexPosts")) || [];
+      const targetPost = savedPosts.find(
+        (post) => String(post.id) === String(editingId)
+      );
+
+      if (targetPost) {
+        if (String(targetPost.authorId) !== String(currentUser.id)) {
+          alert("この投稿は編集できません");
+          window.location.href = "game.html";
+          return;
+        }
+
+        postTitle.value = targetPost.title || "";
+        postMembers.value = targetPost.members || "";
+        postInvite.value = targetPost.invite || "";
+        postDescription.value = targetPost.description || "";
+
+        setActiveCategory(targetPost.category || "雑談");
+        setActiveStyles(targetPost.styles || "初心者歓迎");
+      }
+    }
+  }
+
+  savePostBtn.addEventListener("click", async () => {
+    if (!currentUser) {
+      await fetchCurrentUser();
+    }
+
+    if (!currentUser) {
+      alert("投稿にはDiscordログインが必要です");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const savedPosts = JSON.parse(localStorage.getItem("apexPosts")) || [];
+
+    const newPost = {
+      id: editingId ? Number(editingId) : Date.now(),
+      title: postTitle.value.trim(),
+      category: postCategory.value.trim(),
+      styles: postStyles.value.trim(),
+      members: postMembers.value.trim() || "0",
+      invite: postInvite.value.trim(),
+      description: postDescription.value.trim(),
+      status: "募集中",
+      time: editingId ? "更新済み" : "たった今",
+      authorId: currentUser.id,
+      authorName: currentUser.global_name || currentUser.username
+    };
+
+    if (!newPost.title || !newPost.description) {
+      alert("サーバー名と紹介文を入力してください");
+      return;
+    }
+
+    let updatedPosts;
+
+    if (editingId) {
+      updatedPosts = savedPosts.map((post) =>
+        String(post.id) === String(editingId) ? newPost : post
+      );
+    } else {
+      updatedPosts = [newPost, ...savedPosts];
+    }
+
+    localStorage.setItem("apexPosts", JSON.stringify(updatedPosts));
+    window.location.href = "game.html";
+  });
+
+  initCreatePage();
+</script>
+</body>
+</html>

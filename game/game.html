@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apex Match Pro</title>
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">Apex Match Pro</div>
+
+      <nav class="main-nav">
+        <a href="game.html">トップ</a>
+        <a href="#">ダッシュボード</a>
+        <a href="#">管理</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-box">
+          <p class="hero-label">Discord Server Finder</p>
+          <h1>Discordサーバーメンバー募集アプリ</h1>
+          <p class="hero-text">
+            雰囲気やカテゴリで、自分に合うDiscordサーバーを探せます。雑談、ゲーム、勉強、コミュニティ募集に対応。
+          </p>
+
+          <div class="hero-actions">
+            <a href="create.html" class="btn btn-primary">サーバーを掲載する</a>
+            <a href="http://localhost:3000/auth/discord" class="btn btn-primary">Discordでログイン</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filters">
+      <div class="container">
+        <div class="panel">
+          <div class="filter-block">
+            <h2>カテゴリ</h2>
+            <div class="chips rank-filters">
+              <button class="chip active" data-rank="all" type="button">すべて</button>
+              <button class="chip" data-rank="雑談" type="button">雑談</button>
+              <button class="chip" data-rank="ゲーム" type="button">ゲーム</button>
+              <button class="chip" data-rank="勉強" type="button">勉強</button>
+              <button class="chip" data-rank="音楽" type="button">音楽</button>
+              <button class="chip" data-rank="配信" type="button">配信</button>
+              <button class="chip" data-rank="コミュニティ" type="button">コミュニティ</button>
+            </div>
+          </div>
+
+          <div class="filter-block">
+            <h2>雰囲気</h2>
+            <div class="chips style-filters">
+              <button class="chip active" data-filter="all" type="button">すべて</button>
+              <button class="chip" data-filter="初心者歓迎" type="button">初心者歓迎</button>
+              <button class="chip" data-filter="社会人" type="button">社会人</button>
+              <button class="chip" data-filter="深夜勢" type="button">深夜勢</button>
+              <button class="chip" data-filter="VCあり" type="button">VCあり</button>
+              <button class="chip" data-filter="少人数" type="button">少人数</button>
+              <button class="chip" data-filter="大人数" type="button">大人数</button>
+              <button class="chip" data-filter="雑談中心" type="button">雑談中心</button>
+              <button class="chip" data-filter="ゲーム好き" type="button">ゲーム好き</button>
+            </div>
+          </div>
+
+          <div class="filter-block">
+            <h2>検索</h2>
+            <form class="search-box" id="searchForm">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="サーバー名・紹介文・カテゴリで検索"
+              />
+              <button class="btn btn-primary" type="submit">検索</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="listing">
+      <div class="container">
+        <div class="listing-header">
+          <div>
+            <p class="section-label">SERVER LIST</p>
+            <h2 class="listing-title">募集中のDiscordサーバー</h2>
+          </div>
+          <a href="create.html" class="btn btn-primary">新しく募集する</a>
+        </div>
+
+        <div class="card-grid" id="cardGrid">
+          <article class="party-card" data-style="社会人 深夜勢 VCあり" data-rank="雑談">
+            <div class="party-top">
+              <div>
+                <p class="party-rank">雑談</p>
+                <h3>夜更かし雑談ラウンジ</h3>
+              </div>
+              <span class="party-status open">募集中</span>
+            </div>
+
+            <p class="party-text">
+              夜にのんびり話したい社会人向けの雑談サーバーです。落ち着いた雰囲気で通話メイン。
+            </p>
+
+            <div class="party-tags">
+              <span>社会人</span>
+              <span>深夜勢</span>
+              <span>VCあり</span>
+            </div>
+
+            <div class="party-meta">
+              <span>メンバー数 42人</span>
+              <span>5分前</span>
+            </div>
+
+            <div class="party-actions">
+              <a href="detail.html" class="btn btn-primary">サーバー詳細を見る</a>
+            </div>
+          </article>
+
+          <article class="party-card" data-style="初心者歓迎 ゲーム好き 少人数" data-rank="ゲーム">
+            <div class="party-top">
+              <div>
+                <p class="party-rank">ゲーム</p>
+                <h3>Apex交流サーバー</h3>
+              </div>
+              <span class="party-status open">募集中</span>
+            </div>
+
+            <p class="party-text">
+              ApexやFPSが好きな人向けの交流サーバーです。初心者歓迎で、少人数で話しやすい雰囲気です。
+            </p>
+
+            <div class="party-tags">
+              <span>初心者歓迎</span>
+              <span>ゲーム好き</span>
+              <span>少人数</span>
+            </div>
+
+            <div class="party-meta">
+              <span>メンバー数 18人</span>
+              <span>12分前</span>
+            </div>
+
+            <div class="party-actions">
+              <a href="detail.html" class="btn btn-primary">サーバー詳細を見る</a>
+            </div>
+          </article>
+
+          <article class="party-card" data-style="大人数 雑談中心 VCあり" data-rank="コミュニティ">
+            <div class="party-top">
+              <div>
+                <p class="party-rank">コミュニティ</p>
+                <h3>まったり総合コミュニティ</h3>
+              </div>
+              <span class="party-status open">募集中</span>
+            </div>
+
+            <p class="party-text">
+              雑談、ゲーム、作業通話など何でもOKの総合サーバーです。参加しやすい雰囲気づくりを重視しています。
+            </p>
+
+            <div class="party-tags">
+              <span>大人数</span>
+              <span>雑談中心</span>
+              <span>VCあり</span>
+            </div>
+
+            <div class="party-meta">
+              <span>メンバー数 120人</span>
+              <span>20分前</span>
+            </div>
+
+            <div class="party-actions">
+              <a href="detail.html" class="btn btn-primary">サーバー詳細を見る</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    window.currentUser = null;
+  
+    async function loadMe() {
+      try {
+        const res = await fetch("http://localhost:3000/api/me", {
+          credentials: "include"
+        });
+  
+        if (!res.ok) return;
+  
+        const data = await res.json();
+        if (!data.loggedIn) return;
+  
+        window.currentUser = data.user;
+  
+        const brand = document.querySelector(".brand");
+        if (brand) {
+          const name = data.user.global_name || data.user.username;
+          brand.textContent = `Apex Match Pro - ${name}`;
+        }
+      } catch (e) {
+        console.error("loadMe error:", e);
+      }
+    }
+  </script>
+  
+  <script src="game.js"></script></body>
+</html>

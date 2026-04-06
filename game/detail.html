@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サーバー詳細 | Apex Match Pro</title>
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">Apex Match Pro</div>
+      <nav class="main-nav">
+        <a href="game.html">トップ</a>
+        <a href="create.html">募集作成</a>
+        <a href="login.html">ログイン</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-box" id="detailContainer">
+          <p class="hero-label">SERVER DETAIL</p>
+          <h1>サーバー詳細</h1>
+          <p class="hero-text">データを読み込み中です...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get("id");
+    const detailContainer = document.querySelector("#detailContainer");
+
+    const savedPosts = JSON.parse(localStorage.getItem("apexPosts")) || [];
+    const post = savedPosts.find((item) => String(item.id) === String(postId));
+
+    if (post) {
+      const styleTags = (post.styles || "")
+        .split(" ")
+        .filter(Boolean)
+        .map((style) => `<span>${style}</span>`)
+        .join("");
+
+      const inviteUrl = post.invite && post.invite.trim() !== ""
+        ? post.invite
+        : "#";
+
+      const inviteButtonText = inviteUrl === "#"
+        ? "招待リンク未設定"
+        : "Discordに参加する";
+
+      detailContainer.innerHTML = `
+        <p class="hero-label">SERVER DETAIL</p>
+        <h1>${post.title}</h1>
+        <p class="hero-text">${post.description}</p>
+
+        <div class="panel" style="margin-top: 24px;">
+          <div class="filter-block">
+            <h2>カテゴリ</h2>
+            <p>${post.category || "未設定"}</p>
+          </div>
+
+          <div class="filter-block">
+            <h2>雰囲気</h2>
+            <div class="party-tags">
+              ${styleTags || "<span>未設定</span>"}
+            </div>
+          </div>
+
+          <div class="filter-block">
+            <h2>メンバー数</h2>
+            <p>${post.members || "0"}人</p>
+          </div>
+
+          <div class="filter-block">
+            <h2>募集状況</h2>
+            <p>${post.status || "募集中"}</p>
+            <p>${post.time || ""}</p>
+          </div>
+
+          <div class="filter-block">
+            <h2>招待リンク</h2>
+            <p>${inviteUrl === "#" ? "まだ設定されていません" : post.invite}</p>
+          </div>
+
+          <div class="filter-block">
+            <div class="hero-actions">
+              <a href="${inviteUrl}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">${inviteButtonText}</a>
+              <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      detailContainer.innerHTML = `
+        <p class="hero-label">SERVER DETAIL</p>
+        <h1>サーバーが見つかりません</h1>
+        <p class="hero-text">この募集は削除されたか、まだ保存されていません。</p>
+        <div class="hero-actions" style="margin-top: 24px;">
+          <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
