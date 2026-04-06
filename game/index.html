@@ -19,13 +19,14 @@
         <span id="headerUserName"></span>
         <img id="headerAvatar" style="width:32px;height:32px;border-radius:50%;display:none;">     
        </div>
-      <nav class="main-nav">
+       <nav class="main-nav">
         <a href="index.html">トップ</a>
+        <a href="mypage.html">マイページ</a>
         <a href="create.html">募集作成</a>
         <a href="privacy.html">プライバシーポリシー</a>
         <a href="contact.html">お問い合わせ</a>
-      </nav>   
-     </div>
+      </nav>
+         </div>
   </header>
 
   <main>
@@ -240,17 +241,20 @@
           const name = data.user.global_name || data.user.username || "";
           headerUserName.textContent = name ? `@${name}` : "";
         }
-        const headerAvatar = document.querySelector("#headerAvatar");
+        document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.querySelector("#loginBtn");
+  const logoutBtn = document.querySelector("#logoutBtn");
 
-if (headerAvatar && data.user.avatar) {
-  const isAnimated = data.user.avatar.startsWith("a_");
-  const format = isAnimated ? "gif" : "png";
+  if (loginBtn) {
+    loginBtn.addEventListener("click", goDiscordLogin);
+  }
 
-  const avatarUrl = `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.${format}`;
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
 
-  headerAvatar.src = avatarUrl;
-  headerAvatar.style.display = "block";
-}
+  loadMe();
+});
 
         const loginBtn = document.querySelector("#loginBtn");
         const logoutBtn = document.querySelector("#logoutBtn");
