@@ -9,8 +9,14 @@ dotenv.config();
 
 const app = express();
 
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5500";
+const PORT = process.env.PORT || 3000;
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+app.set("trust proxy", 1);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: FRONTEND_URL,
   credentials: true
 }));
 
@@ -22,12 +28,16 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax"
+    secure: IS_PRODUCTION,
+    sameSite: IS_PRODUCTION ? "none" : "lax"
   }
 }));
 
 const DISCORD_API = "https://discord.com/api/v10";
+
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 
 app.get("/auth/discord", (req, res) => {
   const state = crypto.randomBytes(16).toString("hex");
@@ -70,7 +80,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     const tokenData = await tokenRes.json();
 
     if (!tokenRes.ok) {
-      console.error(tokenData);
+      console.error("Token exchange failed:", tokenData);
       return res.status(400).send("Token exchange failed");
     }
 
@@ -83,7 +93,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     const userData = await userRes.json();
 
     if (!userRes.ok) {
-      console.error(userData);
+      console.error("Failed to fetch user:", userData);
       return res.status(400).send("Failed to fetch user");
     }
 
@@ -101,10 +111,10 @@ app.get("/auth/discord/callback", async (req, res) => {
         return res.status(500).send("Session save failed");
       }
 
-      res.redirect(`${process.env.FRONTEND_URL}/game/game.html`);
+      res.redirect(`${FRONTEND_URL}/`);
     });
   } catch (error) {
-    console.error(error);
+    console.error("Discord login failed:", error);
     res.status(500).send("Discord login failed");
   }
 });
@@ -114,9 +124,18 @@ app.get("/api/me", (req, res) => {
     return res.status(401).json({ loggedIn: false });
   }
 
+  const user = req.session.user;
+
+  const avatarUrl = user.avatar
+    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+    : "https://cdn.discordapp.com/embed/avatars/0.png";
+
   return res.json({
     loggedIn: true,
-    user: req.session.user
+    user: {
+      ...user,
+      avatarUrl
+    }
   });
 });
 
@@ -126,7 +145,6 @@ app.post("/auth/logout", (req, res) => {
   });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
