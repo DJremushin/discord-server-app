@@ -1,0 +1,14 @@
+# Node
+node_modules/
+
+# 環境変数（絶対に上げない）
+.env
+
+# Mac
+.DS_Store
+
+# ログ
+*.log
+
+# 念のため
+dist/
