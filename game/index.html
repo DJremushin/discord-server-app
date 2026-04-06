@@ -241,10 +241,16 @@
           headerUserName.textContent = name ? `@${name}` : "";
         }
         const headerAvatar = document.querySelector("#headerAvatar");
-        if (headerAvatar && data.user.avatar) {
-          headerAvatar.src = data.user.avatar;
-           headerAvatar.style.display = "block";
-        }
+
+if (headerAvatar && data.user.avatar) {
+  const isAnimated = data.user.avatar.startsWith("a_");
+  const format = isAnimated ? "gif" : "png";
+
+  const avatarUrl = `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.${format}`;
+
+  headerAvatar.src = avatarUrl;
+  headerAvatar.style.display = "block";
+}
 
         const loginBtn = document.querySelector("#loginBtn");
         const logoutBtn = document.querySelector("#logoutBtn");
