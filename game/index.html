@@ -9,7 +9,10 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand">Apex Match Pro</div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div class="brand">Apex Match Pro</div>
+        <span id="headerUserName" style="color: #cfd5ff; font-weight: 700;"></span>
+      </div>
 
       <nav class="main-nav">
         <a href="index.html">トップ</a>
@@ -200,12 +203,16 @@
           credentials: "include"
         });
 
+        console.log("api/me status:", res.status);
+
         if (!res.ok) {
           window.currentUser = null;
           return null;
         }
 
         const data = await res.json();
+        console.log("api/me data:", data);
+
         if (!data.loggedIn) {
           window.currentUser = null;
           return null;
@@ -213,10 +220,10 @@
 
         window.currentUser = data.user;
 
-        const brand = document.querySelector(".brand");
-        if (brand) {
-          const name = data.user.global_name || data.user.username;
-          brand.textContent = `Apex Match Pro - ${name}`;
+        const headerUserName = document.querySelector("#headerUserName");
+        if (headerUserName) {
+          const name = data.user.global_name || data.user.username || "";
+          headerUserName.textContent = name ? `@${name}` : "";
         }
 
         const loginBtn = document.querySelector("#loginBtn");
