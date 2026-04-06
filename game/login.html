@@ -12,7 +12,7 @@
   <div class="container header-inner">
     <div class="brand">Apex Match Pro</div>
     <nav class="main-nav">
-      <a href="game.html">トップ</a>
+      <a href="index.html">トップ</a>
       <a href="#">ダッシュボード</a>
       <a href="#">管理</a>
     </nav>
@@ -30,13 +30,28 @@
         </p>
 
         <div class="hero-actions">
-          <a href="#" class="btn btn-primary">Discordでログイン</a>
-          <a href="game.html" class="btn btn-secondary">戻る</a>
+          <button id="discordLoginBtn" class="btn btn-primary" type="button">Discordでログイン</button>
+          <a href="index.html" class="btn btn-secondary">戻る</a>
         </div>
       </div>
     </div>
   </section>
 </main>
+
+<script>
+  const API_BASE =
+    location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "https://discord-server-app.onrender.com";
+
+  const discordLoginBtn = document.querySelector("#discordLoginBtn");
+
+  if (discordLoginBtn) {
+    discordLoginBtn.addEventListener("click", () => {
+      window.location.href = `${API_BASE}/auth/discord`;
+    });
+  }
+</script>
 
 </body>
 </html>

@@ -12,7 +12,7 @@
       <div class="brand">Apex Match Pro</div>
 
       <nav class="main-nav">
-        <a href="game.html">トップ</a>
+        <a href="index.html">トップ</a>
         <a href="#">ダッシュボード</a>
         <a href="#">管理</a>
       </nav>
@@ -31,7 +31,8 @@
 
           <div class="hero-actions">
             <a href="create.html" class="btn btn-primary">サーバーを掲載する</a>
-            <a href="http://localhost:3000/auth/discord" class="btn btn-primary">Discordでログイン</a>
+            <button id="loginBtn" class="btn btn-primary" type="button">Discordでログイン</button>
+            <button id="logoutBtn" class="btn btn-secondary" type="button" style="display: none;">ログアウト</button>
           </div>
         </div>
       </div>
@@ -184,32 +185,91 @@
       </div>
     </section>
   </main>
+
   <script>
     window.currentUser = null;
-  
+
+    const API_BASE =
+      location.hostname === "localhost"
+        ? "http://localhost:3000"
+        : "https://discord-server-app.onrender.com";
+
     async function loadMe() {
       try {
-        const res = await fetch("http://localhost:3000/api/me", {
+        const res = await fetch(`${API_BASE}/api/me`, {
           credentials: "include"
         });
-  
-        if (!res.ok) return;
-  
+
+        if (!res.ok) {
+          window.currentUser = null;
+          return null;
+        }
+
         const data = await res.json();
-        if (!data.loggedIn) return;
-  
+        if (!data.loggedIn) {
+          window.currentUser = null;
+          return null;
+        }
+
         window.currentUser = data.user;
-  
+
         const brand = document.querySelector(".brand");
         if (brand) {
           const name = data.user.global_name || data.user.username;
           brand.textContent = `Apex Match Pro - ${name}`;
         }
+
+        const loginBtn = document.querySelector("#loginBtn");
+        const logoutBtn = document.querySelector("#logoutBtn");
+
+        if (loginBtn) {
+          loginBtn.textContent = "ログイン済み";
+          loginBtn.disabled = true;
+        }
+
+        if (logoutBtn) {
+          logoutBtn.style.display = "inline-flex";
+        }
+
+        return data.user;
       } catch (e) {
         console.error("loadMe error:", e);
+        window.currentUser = null;
+        return null;
       }
     }
+
+    function goDiscordLogin() {
+      window.location.href = `${API_BASE}/auth/discord`;
+    }
+
+    async function logout() {
+      try {
+        await fetch(`${API_BASE}/auth/logout`, {
+          method: "POST",
+          credentials: "include"
+        });
+        window.currentUser = null;
+        location.reload();
+      } catch (e) {
+        console.error("logout error:", e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginBtn = document.querySelector("#loginBtn");
+      const logoutBtn = document.querySelector("#logoutBtn");
+
+      if (loginBtn) {
+        loginBtn.addEventListener("click", goDiscordLogin);
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
+      }
+    });
   </script>
-  
-  <script src="game.js"></script></body>
+
+  <script src="game.js"></script>
+</body>
 </html>

@@ -12,7 +12,7 @@
   <div class="container header-inner">
     <div class="brand">Apex Match Pro</div>
     <nav class="main-nav">
-      <a href="game.html">トップ</a>
+      <a href="index.html">トップ</a>
       <a href="#">ダッシュボード</a>
       <a href="#">管理</a>
     </nav>
@@ -86,7 +86,7 @@
         <div class="filter-block">
           <div class="hero-actions">
             <button type="button" class="btn btn-primary" id="savePostBtn">この内容で保存する</button>
-            <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+            <a href="index.html" class="btn btn-secondary">トップへ戻る</a>
           </div>
         </div>
       </div>
@@ -95,6 +95,11 @@
 </main>
 
 <script>
+  const API_BASE =
+    location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "https://discord-server-app.onrender.com";
+
   const params = new URLSearchParams(window.location.search);
   const editingId = params.get("id");
 
@@ -113,7 +118,7 @@
 
   async function fetchCurrentUser() {
     try {
-      const res = await fetch("http://localhost:3000/api/me", {
+      const res = await fetch(`${API_BASE}/api/me`, {
         credentials: "include"
       });
 
@@ -189,7 +194,7 @@
       if (targetPost) {
         if (String(targetPost.authorId) !== String(currentUser.id)) {
           alert("この投稿は編集できません");
-          window.location.href = "game.html";
+          window.location.href = "index.html";
           return;
         }
 
@@ -228,7 +233,8 @@
       status: "募集中",
       time: editingId ? "更新済み" : "たった今",
       authorId: currentUser.id,
-      authorName: currentUser.global_name || currentUser.username
+      authorName: currentUser.global_name || currentUser.username,
+      authorAvatar: currentUser.avatarUrl || ""
     };
 
     if (!newPost.title || !newPost.description) {
@@ -247,7 +253,7 @@
     }
 
     localStorage.setItem("apexPosts", JSON.stringify(updatedPosts));
-    window.location.href = "game.html";
+    window.location.href = "index.html";
   });
 
   initCreatePage();

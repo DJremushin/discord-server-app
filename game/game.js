@@ -1,3 +1,8 @@
+const API_BASE =
+  location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://discord-server-app.onrender.com";
+
 const styleChips = document.querySelectorAll(".style-filters .chip");
 const rankChips = document.querySelectorAll(".rank-filters .chip");
 const searchForm = document.querySelector("#searchForm");

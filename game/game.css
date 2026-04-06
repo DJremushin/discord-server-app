@@ -676,3 +676,6 @@ textarea {
     font-size: 22px;
   }
 }
+.hidden {
+  display: none;
+}
