@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>マイページ | Apex Match Pro</title>
+  <link rel="stylesheet" href="game.css"/>
+
+  <script async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4057392857525272"
+    crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">Apex Match Pro</div>
+    <nav class="main-nav">
+      <a href="index.html">トップ</a>
+      <a href="create.html">募集作成</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="contact.html">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-box">
+        <h1>マイページ</h1>
+        <div id="userInfo"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="footer-copy">© 2026 Apex Match Pro</p>
+  </div>
+</footer>
+
+<script>
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const container = document.getElementById("userInfo");
+
+  if (!user) {
+    container.innerHTML = "<p>ログインしてください</p>";
+  } else {
+    container.innerHTML = `
+      <img src="${user.avatar}" style="width:80px;border-radius:50%" />
+      <h2>${user.username}</h2>
+      <p>ID: ${user.id}</p>
+    `;
+  }
+</script>
+
+</body>
+</html>

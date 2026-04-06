@@ -16,8 +16,9 @@
     <div class="container header-inner">
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
         <div class="brand">Remushin Watch</div>
-        <span id="headerUserName" style="color: #cfd5ff; font-weight: 700;"></span>
-      </div>
+        <span id="headerUserName"></span>
+        <img id="headerAvatar" style="width:32px;height:32px;border-radius:50%;display:none;">     
+       </div>
       <nav class="main-nav">
         <a href="index.html">トップ</a>
         <a href="create.html">募集作成</a>
@@ -238,6 +239,11 @@
         if (headerUserName) {
           const name = data.user.global_name || data.user.username || "";
           headerUserName.textContent = name ? `@${name}` : "";
+        }
+        const headerAvatar = document.querySelector("#headerAvatar");
+        if (headerAvatar && data.user.avatar) {
+          headerAvatar.src = data.user.avatar;
+           headerAvatar.style.display = "block";
         }
 
         const loginBtn = document.querySelector("#loginBtn");
