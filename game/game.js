@@ -33,6 +33,46 @@ function getPostAvatarUrl(post) {
   return getDefaultAvatarUrl(post.authorId);
 }
 
+function syncCurrentUserPosts() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+
+  const savedPosts = JSON.parse(localStorage.getItem("apexPosts")) || [];
+  let updated = false;
+
+  const nextPosts = savedPosts.map((post) => {
+    if (String(post.authorId) !== String(currentUser.id)) {
+      return post;
+    }
+
+    const nextAuthorName =
+      currentUser.global_name || currentUser.username || post.authorName || "不明";
+
+    const nextAuthorAvatar =
+      currentUser.avatarUrl && String(currentUser.avatarUrl).trim() !== ""
+        ? currentUser.avatarUrl
+        : getDefaultAvatarUrl(currentUser.id);
+
+    if (
+      post.authorName !== nextAuthorName ||
+      post.authorAvatar !== nextAuthorAvatar
+    ) {
+      updated = true;
+      return {
+        ...post,
+        authorName: nextAuthorName,
+        authorAvatar: nextAuthorAvatar
+      };
+    }
+
+    return post;
+  });
+
+  if (updated) {
+    localStorage.setItem("apexPosts", JSON.stringify(nextPosts));
+  }
+}
+
 function filterCards() {
   const allCards = document.querySelectorAll(".party-card");
 
@@ -76,7 +116,10 @@ function deletePost(id) {
 
   localStorage.setItem("apexPosts", JSON.stringify(updatedPosts));
 
-  cardGrid.innerHTML = "";
+  if (cardGrid) {
+    cardGrid.innerHTML = "";
+  }
+
   renderSavedPosts();
   filterCards();
 }
@@ -100,7 +143,10 @@ styleChips.forEach((chip) => {
         )
         .map((c) => c.dataset.filter);
 
-      const allChip = document.querySelector('.style-filters .chip[data-filter="all"]');
+      const allChip = document.querySelector(
+        '.style-filters .chip[data-filter="all"]'
+      );
+
       if (allChip) {
         allChip.classList.remove("active");
       }
@@ -133,7 +179,10 @@ rankChips.forEach((chip) => {
         )
         .map((c) => c.dataset.rank);
 
-      const allChip = document.querySelector('.rank-filters .chip[data-rank="all"]');
+      const allChip = document.querySelector(
+        '.rank-filters .chip[data-rank="all"]'
+      );
+
       if (allChip) {
         allChip.classList.remove("active");
       }
@@ -166,9 +215,11 @@ function renderSavedPosts() {
   const currentUser = getCurrentUser();
   const savedPosts = JSON.parse(localStorage.getItem("apexPosts")) || [];
 
+  cardGrid.querySelectorAll(".saved-post-card").forEach((el) => el.remove());
+
   savedPosts.forEach((post) => {
     const article = document.createElement("article");
-    article.className = "party-card";
+    article.className = "party-card saved-post-card";
     article.dataset.style = post.styles || "";
     article.dataset.rank = post.category || "";
 
@@ -195,21 +246,21 @@ function renderSavedPosts() {
     article.innerHTML = `
       <div class="party-top">
         <div>
-          <p class="party-rank">${post.category}</p>
-          <h3><a href="detail.html?id=${post.id}">${post.title}</a></h3>
+          <p class="party-rank">${post.category || "未設定"}</p>
+          <h3><a href="detail.html?id=${post.id}">${post.title || "無題"}</a></h3>
         </div>
-        <span class="party-status open">${post.status}</span>
+        <span class="party-status open">${post.status || "募集中"}</span>
       </div>
 
-      <p class="party-text">${post.description}</p>
+      <p class="party-text">${post.description || ""}</p>
 
       <div class="party-tags">
         ${styleTags}
       </div>
 
       <div class="party-meta">
-        <span>メンバー数 ${post.members}人</span>
-        <span>${post.time}</span>
+        <span>メンバー数 ${post.members || 0}人</span>
+        <span>${post.time || "いま"}</span>
       </div>
 
       <div class="party-author">
@@ -248,6 +299,7 @@ async function initPage() {
     await loadMe();
   }
 
+  syncCurrentUserPosts();
   renderSavedPosts();
   filterCards();
 }
