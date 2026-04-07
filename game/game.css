@@ -747,3 +747,20 @@ textarea {
     padding: 8px 12px;
   }
 }
+.party-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  color: #cfd5ff;
+  font-size: 14px;
+}
+
+.party-author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}

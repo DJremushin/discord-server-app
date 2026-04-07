@@ -12,6 +12,27 @@ function getCurrentUser() {
   return window.currentUser || null;
 }
 
+function getDefaultAvatarUrl(authorId) {
+  if (!authorId || authorId === "system") {
+    return "https://cdn.discordapp.com/embed/avatars/0.png";
+  }
+
+  try {
+    const index = Number(BigInt(authorId) % 5n);
+    return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+  } catch (e) {
+    return "https://cdn.discordapp.com/embed/avatars/0.png";
+  }
+}
+
+function getPostAvatarUrl(post) {
+  if (post.authorAvatar && String(post.authorAvatar).trim() !== "") {
+    return post.authorAvatar;
+  }
+
+  return getDefaultAvatarUrl(post.authorId);
+}
+
 function filterCards() {
   const allCards = document.querySelectorAll(".party-card");
 
@@ -169,6 +190,8 @@ function renderSavedPosts() {
       `
       : "";
 
+    const authorAvatarUrl = getPostAvatarUrl(post);
+
     article.innerHTML = `
       <div class="party-top">
         <div>
@@ -189,7 +212,12 @@ function renderSavedPosts() {
         <span>${post.time}</span>
       </div>
 
-      <div class="party-meta">
+      <div class="party-author">
+        <img
+          class="party-author-avatar"
+          src="${authorAvatarUrl}"
+          alt="${post.authorName || "投稿者"}"
+        />
         <span>投稿者 ${post.authorName || "不明"}</span>
       </div>
 
