@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>サーバー詳細 | Remushin Watch</title>
-    <link rel="stylesheet" href="game.css" />
-  
-    <!-- ✅ Google AdSense -->
-    <script async
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サーバー詳細 | Remushin Watch</title>
+  <link rel="stylesheet" href="game.css" />
+
+  <!-- Google AdSense -->
+  <script async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4057392857525272"
-    crossorigin="anonymous"></script> 
-   </head>
-    <body>
+    crossorigin="anonymous"></script>
+</head>
+<body>
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">Remushin Watch</div>
       <nav class="main-nav">
         <a href="index.html">トップ</a>
+        <a href="mypage.html">マイページ</a>
         <a href="create.html">募集作成</a>
         <a href="privacy.html">プライバシーポリシー</a>
         <a href="contact.html">お問い合わせ</a>
       </nav>
-        </div>
+    </div>
   </header>
 
   <main>
@@ -35,6 +36,7 @@
       </div>
     </section>
   </main>
+
   <footer class="site-footer">
     <div class="container footer-inner">
       <p class="footer-copy">© 2026 Remushin Watch</p>
@@ -60,20 +62,38 @@
         .map((style) => `<span>${style}</span>`)
         .join("");
 
-      const inviteUrl = post.invite && post.invite.trim() !== ""
-        ? post.invite
-        : "#";
+      const inviteUrl =
+        post.invite && post.invite.trim() !== ""
+          ? post.invite
+          : "#";
 
-      const inviteButtonText = inviteUrl === "#"
-        ? "招待リンク未設定"
-        : "Discordに参加する";
+      const inviteButtonText =
+        inviteUrl === "#"
+          ? "招待リンク未設定"
+          : "Discordに参加する";
+
+      const authorAvatar = post.authorAvatar && String(post.authorAvatar).trim() !== ""
+        ? post.authorAvatar
+        : "https://cdn.discordapp.com/embed/avatars/0.png";
 
       detailContainer.innerHTML = `
         <p class="hero-label">SERVER DETAIL</p>
-        <h1>${post.title}</h1>
-        <p class="hero-text">${post.description}</p>
+        <h1>${post.title || "無題"}</h1>
+        <p class="hero-text">${post.description || "説明はありません。"}</p>
 
         <div class="panel" style="margin-top: 24px;">
+          <div class="filter-block">
+            <h2>投稿者</h2>
+            <div class="party-author">
+              <img
+                class="party-author-avatar"
+                src="${authorAvatar}"
+                alt="${post.authorName || "投稿者"}"
+              />
+              <span>${post.authorName || "不明"}</span>
+            </div>
+          </div>
+
           <div class="filter-block">
             <h2>カテゴリ</h2>
             <p>${post.category || "未設定"}</p>
@@ -105,7 +125,7 @@
           <div class="filter-block">
             <div class="hero-actions">
               <a href="${inviteUrl}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">${inviteButtonText}</a>
-              <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+              <a href="index.html" class="btn btn-secondary">トップへ戻る</a>
             </div>
           </div>
         </div>
@@ -116,7 +136,7 @@
         <h1>サーバーが見つかりません</h1>
         <p class="hero-text">この募集は削除されたか、まだ保存されていません。</p>
         <div class="hero-actions" style="margin-top: 24px;">
-          <a href="game.html" class="btn btn-secondary">トップへ戻る</a>
+          <a href="index.html" class="btn btn-secondary">トップへ戻る</a>
         </div>
       `;
     }
